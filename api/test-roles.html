@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test - Sistema de Roles</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .card {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 { color: #333; }
+        h2 { color: #667eea; margin-top: 0; }
+        .btn {
+            background: #667eea;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .btn:hover { background: #5568d3; }
+        pre {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        .info {
+            background: #e8f4fd;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        .success {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 15px;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎭 Sistema de Roles - API Business</h1>
+    
+    <div class="card">
+        <h2>📋 Roles Disponibles</h2>
+        <div class="info">
+            <h3>Usuarios Regulares:</h3>
+            <ul>
+                <li><strong>buyer_basic</strong> - Comprador Básico (por defecto)</li>
+                <li><strong>buyer_premium</strong> - Comprador Premium</li>
+                <li><strong>seller_basic</strong> - Vendedor Básico</li>
+                <li><strong>seller_premium</strong> - Vendedor Premium</li>
+            </ul>
+            <h3>Administradores:</h3>
+            <ul>
+                <li><strong>admin</strong> - Administrador</li>
+                <li><strong>manager</strong> - Gestor</li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="card">
+        <h2>🔐 Funcionalidades del Sistema</h2>
+        <ul>
+            <li>Al registrarse, los usuarios pueden elegir entre <code>seller_basic</code> o <code>buyer_basic</code></li>
+            <li>Todos empiezan con rol "Basic"</li>
+            <li>Pueden actualizar a "Premium" usando el endpoint de upgrade</li>
+            <li>Los roles de administrador solo pueden ser asignados manualmente en BD</li>
+        </ul>
+    </div>
+    
+    <div class="card">
+        <h2>🧪 Pruebas</h2>
+        
+        <h3>1. Registrar nuevo usuario</h3>
+        <button class="btn" onclick="testRegister('buyer')">Registrar Comprador</button>
+        <button class="btn" onclick="testRegister('seller')">Registrar Vendedor</button>
+        
+        <h3>2. Ver perfil (requiere login)</h3>
+        <button class="btn" onclick="testProfile()">Ver Mi Perfil</button>
+        
+        <h3>3. Actualizar a Premium</h3>
+        <button class="btn" onclick="testUpgrade()">Upgrade a Premium</button>
+        
+        <div id="result"></div>
+    </div>
+    
+    <div class="card">
+        <h2>📚 Endpoints Disponibles</h2>
+        <pre>
+POST /api/controllers/auth/register.php
+Body: {
+  "name": "...",
+  "surname1": "...",
+  "email": "...",
+  "password": "...",
+  "role": "seller_basic" | "buyer_basic"
+}
+
+POST /api/controllers/user/upgrade-premium.php
+Headers: Cookie: auth_token=...
+Body: {} (vacío)
+
+// Middleware para proteger endpoints:
+AuthMiddleware::requireSeller()        // Solo vendedores
+AuthMiddleware::requirePremium()       // Solo premium
+AuthMiddleware::requireSellerPremium() // Solo vendedor premium
+AuthMiddleware::requireAdmin()         // Solo admin/manager
+        </pre>
+    </div>
+
+    <script>
+        function testRegister(type) {
+            const role = type === 'seller' ? 'seller_basic' : 'buyer_basic';
+            const data = {
+                name: 'Test',
+                surname1: type === 'seller' ? 'Seller' : 'Buyer',
+                email: `test${type}${Date.now()}@example.com`,
+                password: 'Test1234!',
+                role: role
+            };
+            
+            fetch('/api/controllers/auth/register.php', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(data)
+            })
+            .then(r => r.json())
+            .then(data => {
+                document.getElementById('result').innerHTML = `
+                    <div class="success">
+                        <h3>✅ Registro Exitoso</h3>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    </div>
+                `;
+            })
+            .catch(err => {
+                document.getElementById('result').innerHTML = `
+                    <div style="background:#f8d7da;border-left:4px solid #dc3545;padding:15px">
+                        <h3>❌ Error</h3>
+                        <pre>${err.message}</pre>
+                    </div>
+                `;
+            });
+        }
+        
+        function testProfile() {
+            fetch('/api/controllers/user/profile.php')
+            .then(r => r.json())
+            .then(data => {
+                document.getElementById('result').innerHTML = `
+                    <div class="success">
+                        <h3>👤 Perfil de Usuario</h3>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    </div>
+                `;
+            });
+        }
+        
+        function testUpgrade() {
+            fetch('/api/controllers/user/upgrade-premium.php', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: '{}'
+            })
+            .then(r => r.json())
+            .then(data => {
+                document.getElementById('result').innerHTML = `
+                    <div class="success">
+                        <h3>⭐ Upgrade Exitoso</h3>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    </div>
+                `;
+            });
+        }
+    </script>
+</body>
+</html>

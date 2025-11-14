@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Usuario - API Business</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            width: 100%;
+            padding: 40px;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+            text-align: center;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        
+        label .required {
+            color: #e74c3c;
+        }
+        
+        label .optional {
+            color: #95a5a6;
+            font-weight: normal;
+            font-size: 12px;
+        }
+        
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        input[type="tel"],
+        select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            font-family: inherit;
+            background-color: white;
+        }
+        
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="password"]:focus,
+        input[type="tel"]:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23333' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            padding-right: 40px;
+        }
+        
+        .role-info {
+            background: #e8f4fd;
+            border-left: 3px solid #667eea;
+            padding: 10px 12px;
+            margin-top: 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            color: #555;
+            line-height: 1.5;
+        }
+        
+        input.error {
+            border-color: #e74c3c;
+        }
+        
+        .error-message {
+            color: #e74c3c;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        .error-message.show {
+            display: block;
+        }
+        
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            width: 100%;
+        }
+        
+        .file-input-wrapper input[type="file"] {
+            position: absolute;
+            left: -9999px;
+        }
+        
+        .file-input-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 15px;
+            border: 2px dashed #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+        
+        .file-input-label:hover {
+            border-color: #667eea;
+            background: #f0f3ff;
+        }
+        
+        .file-input-label svg {
+            margin-right: 10px;
+        }
+        
+        .preview-image {
+            margin-top: 10px;
+            text-align: center;
+            display: none;
+        }
+        
+        .preview-image img {
+            max-width: 150px;
+            max-height: 150px;
+            border-radius: 50%;
+            border: 3px solid #667eea;
+        }
+        
+        .preview-image.show {
+            display: block;
+        }
+        
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 14px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .alert {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .alert.show {
+            display: block;
+        }
+        
+        .alert-success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        
+        .alert-error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        
+        .alert-info {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+        
+        .spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto;
+        }
+        
+        .spinner.show {
+            display: block;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .password-strength {
+            margin-top: 5px;
+            height: 4px;
+            background: #e0e0e0;
+            border-radius: 2px;
+            overflow: hidden;
+            display: none;
+        }
+        
+        .password-strength.show {
+            display: block;
+        }
+        
+        .password-strength-bar {
+            height: 100%;
+            transition: all 0.3s ease;
+        }
+        
+        .strength-weak { background: #e74c3c; width: 33%; }
+        .strength-medium { background: #f39c12; width: 66%; }
+        .strength-strong { background: #27ae60; width: 100%; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Registro de Usuario</h1>
+        <p class="subtitle">Crea tu cuenta en nuestro sistema</p>
+        
+        <div id="alert" class="alert"></div>
+        
+        <form id="registerForm" enctype="multipart/form-data">
+            <div class="row">
+                <div class="form-group">
+                    <label for="name">Nombre <span class="required">*</span></label>
+                    <input type="text" id="name" name="name" required>
+                    <div class="error-message" id="name-error"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="surname1">Primer Apellido <span class="required">*</span></label>
+                    <input type="text" id="surname1" name="surname1" required>
+                    <div class="error-message" id="surname1-error"></div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="surname2">Segundo Apellido <span class="optional">(opcional)</span></label>
+                <input type="text" id="surname2" name="surname2">
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email <span class="required">*</span></label>
+                <input type="email" id="email" name="email" required>
+                <div class="error-message" id="email-error"></div>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Contraseña <span class="required">*</span></label>
+                <input type="password" id="password" name="password" required minlength="8">
+                <div class="password-strength" id="password-strength">
+                    <div class="password-strength-bar" id="password-strength-bar"></div>
+                </div>
+                <div class="error-message" id="password-error"></div>
+            </div>
+            
+            <div class="form-group">
+                <label for="phone">Teléfono <span class="optional">(opcional)</span></label>
+                <input type="tel" id="phone" name="phone" placeholder="+34 600 000 000">
+                <div class="error-message" id="phone-error"></div>
+            </div>
+            
+            <div class="form-group">
+                <label for="role">Tipo de Cuenta <span class="required">*</span></label>
+                <select id="role" name="role" required>
+                    <option value="buyer_basic">Comprador</option>
+                    <option value="seller_basic">Vendedor</option>
+                </select>
+                <div class="role-info">
+                    Al registrarte obtendrás una cuenta Básica. Podrás actualizar a Premium más adelante.
+                </div>
+                <div class="error-message" id="role-error"></div>
+            </div>
+            
+            <div class="form-group">
+                <label for="profile_image">Foto de Perfil <span class="optional">(opcional)</span></label>
+                <div class="file-input-wrapper">
+                    <input type="file" id="profile_image" name="profile_image" accept="image/jpeg,image/jpg,image/png,image/webp">
+                    <label for="profile_image" class="file-input-label">
+                        <svg width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M8.5 11.5a.5.5 0 0 1-1 0V7.707L6.354 8.854a.5.5 0 1 1-.708-.708l2-2a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 7.707V11.5z"/>
+                            <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5v2z"/>
+                        </svg>
+                        <span id="file-label">Seleccionar imagen</span>
+                    </label>
+                </div>
+                <div class="preview-image" id="preview-image">
+                    <img id="preview-img" src="" alt="Preview">
+                </div>
+            </div>
+            
+            <button type="submit" class="btn" id="submitBtn">
+                <span id="btn-text">Registrarse</span>
+                <div class="spinner" id="spinner"></div>
+            </button>
+        </form>
+    </div>
+    
+    <script>
+        const form = document.getElementById('registerForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const btnText = document.getElementById('btn-text');
+        const spinner = document.getElementById('spinner');
+        const alert = document.getElementById('alert');
+        const profileImageInput = document.getElementById('profile_image');
+        const fileLabel = document.getElementById('file-label');
+        const previewImage = document.getElementById('preview-image');
+        const previewImg = document.getElementById('preview-img');
+        const passwordInput = document.getElementById('password');
+        const passwordStrength = document.getElementById('password-strength');
+        const passwordStrengthBar = document.getElementById('password-strength-bar');
+        
+        // Preview image
+        profileImageInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                if (file.size > 5 * 1024 * 1024) {
+                    showAlert('La imagen no debe superar 5MB', 'error');
+                    profileImageInput.value = '';
+                    return;
+                }
+                
+                fileLabel.textContent = file.name;
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewImg.src = e.target.result;
+                    previewImage.classList.add('show');
+                };
+                reader.readAsDataURL(file);
+            } else {
+                fileLabel.textContent = 'Seleccionar imagen';
+                previewImage.classList.remove('show');
+            }
+        });
+        
+        // Password strength
+        passwordInput.addEventListener('input', function() {
+            const password = this.value;
+            if (password.length === 0) {
+                passwordStrength.classList.remove('show');
+                return;
+            }
+            
+            passwordStrength.classList.add('show');
+            
+            let strength = 0;
+            if (password.length >= 8) strength++;
+            if (password.match(/[a-z]/) && password.match(/[A-Z]/)) strength++;
+            if (password.match(/[0-9]/)) strength++;
+            if (password.match(/[^a-zA-Z0-9]/)) strength++;
+            
+            passwordStrengthBar.className = 'password-strength-bar';
+            if (strength <= 2) {
+                passwordStrengthBar.classList.add('strength-weak');
+            } else if (strength === 3) {
+                passwordStrengthBar.classList.add('strength-medium');
+            } else {
+                passwordStrengthBar.classList.add('strength-strong');
+            }
+        });
+        
+        // Clear errors on input
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('input', function() {
+                this.classList.remove('error');
+                const errorDiv = document.getElementById(this.id + '-error');
+                if (errorDiv) {
+                    errorDiv.classList.remove('show');
+                }
+            });
+        });
+        
+        // Form submission
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Clear previous errors
+            document.querySelectorAll('.error').forEach(el => el.classList.remove('error'));
+            document.querySelectorAll('.error-message').forEach(el => el.classList.remove('show'));
+            alert.classList.remove('show');
+            
+            // Disable button and show spinner
+            submitBtn.disabled = true;
+            btnText.style.display = 'none';
+            spinner.classList.add('show');
+            
+            try {
+                const formData = new FormData();
+                formData.append('name', document.getElementById('name').value.trim());
+                formData.append('surname1', document.getElementById('surname1').value.trim());
+                formData.append('surname2', document.getElementById('surname2').value.trim());
+                formData.append('email', document.getElementById('email').value.trim());
+                formData.append('password', document.getElementById('password').value);
+                formData.append('phone', document.getElementById('phone').value.trim());
+                
+                if (profileImageInput.files[0]) {
+                    formData.append('profile_image', profileImageInput.files[0]);
+                }
+                
+                const response = await fetch('/api/controllers/auth/register.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showAlert('✅ ' + data.message + '<br><small>' + data.data.message + '</small>', 'success');
+                    form.reset();
+                    previewImage.classList.remove('show');
+                    fileLabel.textContent = 'Seleccionar imagen';
+                    passwordStrength.classList.remove('show');
+                } else {
+                    if (data.errors && typeof data.errors === 'object') {
+                        // Show field-specific errors
+                        Object.keys(data.errors).forEach(field => {
+                            const input = document.getElementById(field);
+                            const errorDiv = document.getElementById(field + '-error');
+                            if (input && errorDiv) {
+                                input.classList.add('error');
+                                errorDiv.textContent = data.errors[field];
+                                errorDiv.classList.add('show');
+                            }
+                        });
+                    }
+                    showAlert('❌ ' + data.message, 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showAlert('❌ Error de conexión con el servidor', 'error');
+            } finally {
+                submitBtn.disabled = false;
+                btnText.style.display = 'inline';
+                spinner.classList.remove('show');
+            }
+        });
+        
+        function showAlert(message, type) {
+            alert.innerHTML = message;
+            alert.className = 'alert alert-' + type + ' show';
+            
+            if (type === 'success') {
+                setTimeout(() => {
+                    alert.classList.remove('show');
+                }, 10000);
+            }
+        }
+    </script>
+</body>
+</html>
