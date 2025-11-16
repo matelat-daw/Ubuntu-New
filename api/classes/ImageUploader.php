@@ -8,6 +8,7 @@ class ImageUploader {
     
     /**
      * Process and upload profile image
+     * Always converts to WebP for optimization
      * 
      * @param array $file $_FILES array element
      * @param int|null $userId User ID (if updating existing user), null for new user
@@ -36,7 +37,7 @@ class ImageUploader {
                 return ['success' => false, 'error' => 'Error al procesar la imagen'];
             }
             
-            // Resize if needed
+            // Resize if needed (max 500px)
             $image = self::resizeImage($image, 500);
             
             // Determine save path
@@ -47,13 +48,16 @@ class ImageUploader {
                     mkdir($userDir, 0755, true);
                 }
                 
-                // Delete old profile image if exists
-                $finalPath = $userDir . '/profile.webp';
-                if (file_exists($finalPath)) {
-                    unlink($finalPath);
+                // Delete old profile images if exist (any extension)
+                $oldFiles = glob($userDir . '/profile.*');
+                foreach ($oldFiles as $oldFile) {
+                    if (file_exists($oldFile)) {
+                        unlink($oldFile);
+                    }
                 }
                 
-                // Save as WebP
+                // Save as WebP for optimization
+                $finalPath = $userDir . '/profile.webp';
                 imagewebp($image, $finalPath, 90);
                 imagedestroy($image);
                 

@@ -117,6 +117,7 @@ try {
             mkdir($userDir, 0755, true);
         }
         
+        // Move temp WebP file to user directory
         $finalPath = $userDir . '/profile.webp';
         rename($uploadResult['temp_path'], $finalPath);
         
