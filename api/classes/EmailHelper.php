@@ -23,6 +23,32 @@ class EmailHelper {
         return self::sendEmail($email, $subject, $body);
     }
     
+    /**
+     * Send a plain text email
+     */
+    public static function sendPlainEmail($to, $subject, $body) {
+        $headers = "MIME-Version: 1.0" . "\r\n";
+        $headers .= "Content-type: text/plain; charset=UTF-8" . "\r\n";
+        $headers .= "From: " . SMTP_FROM_NAME . " <" . SMTP_FROM . ">" . "\r\n";
+        $headers .= "Reply-To: " . SMTP_FROM . "\r\n";
+        $headers .= "X-Mailer: PHP/" . phpversion();
+        
+        $success = mail($to, $subject, $body, $headers);
+        
+        if (!$success) {
+            error_log("Failed to send plain email to: " . $to);
+        }
+        
+        return $success;
+    }
+    
+    /**
+     * Send a custom HTML email
+     */
+    public static function sendHtmlEmail($to, $subject, $htmlBody) {
+        return self::sendEmail($to, $subject, $htmlBody);
+    }
+    
     private static function sendEmail($to, $subject, $htmlBody) {
         $headers = "MIME-Version: 1.0" . "\r\n";
         $headers .= "Content-type: text/html; charset=UTF-8" . "\r\n";

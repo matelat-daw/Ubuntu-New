@@ -31,31 +31,47 @@ try {
     $database = new Database();
     $db = $database->getConnection();
     
-    // Verify item belongs to user's cart
-    $itemQuery = "
-        SELECT ci.id, p.name
-        FROM cart_items ci
-        JOIN carts c ON ci.cart_id = c.id
-        JOIN products p ON ci.product_id = p.id
-        WHERE ci.id = ? AND c.user_id = ? AND c.status = 'active'
-    ";
-    $itemStmt = $db->prepare($itemQuery);
-    $itemStmt->execute([$itemId, $userId]);
-    $item = $itemStmt->fetch();
+    // Start transaction
+    $db->beginTransaction();
     
-    if (!$item) {
-        Response::error('Item no encontrado en tu carrito', 404);
+    try {
+        // Verify item belongs to user's cart and get product info
+        $itemQuery = "
+            SELECT ci.id, ci.product_id, ci.quantity, p.name
+            FROM cart_items ci
+            JOIN carts c ON ci.cart_id = c.id
+            JOIN products p ON ci.product_id = p.id
+            WHERE ci.id = ? AND c.user_id = ? AND c.status = 'active'
+        ";
+        $itemStmt = $db->prepare($itemQuery);
+        $itemStmt->execute([$itemId, $userId]);
+        $item = $itemStmt->fetch();
+        
+        if (!$item) {
+            throw new Exception('Item no encontrado en tu carrito');
+        }
+        
+        // Release reserved stock
+        $releaseStockQuery = "UPDATE products SET reserved_stock = GREATEST(0, reserved_stock - ?) WHERE id = ?";
+        $releaseStockStmt = $db->prepare($releaseStockQuery);
+        $releaseStockStmt->execute([$item['quantity'], $item['product_id']]);
+        
+        // Delete item
+        $deleteQuery = "DELETE FROM cart_items WHERE id = ?";
+        $deleteStmt = $db->prepare($deleteQuery);
+        $deleteStmt->execute([$itemId]);
+        
+        $db->commit();
+        
+        Response::success([
+            'message' => 'Producto eliminado del carrito',
+            'product_name' => $item['name']
+        ]);
+        
+    } catch (Exception $e) {
+        $db->rollBack();
+        throw $e;
     }
-    
-    // Delete item
-    $deleteQuery = "DELETE FROM cart_items WHERE id = ?";
-    $deleteStmt = $db->prepare($deleteQuery);
-    $deleteStmt->execute([$itemId]);
-    
-    Response::success([
-        'message' => 'Producto eliminado del carrito',
-        'product_name' => $item['name']
-    ]);
     
 } catch (Exception $e) {
     error_log("Error in remove from cart: " . $e->getMessage());

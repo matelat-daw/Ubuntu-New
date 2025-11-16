@@ -39,99 +39,131 @@ try {
     $database = new Database();
     $db = $database->getConnection();
     
-    // Verify product exists and is active
-    $productQuery = "SELECT id, name, price, stock, active, seller_id FROM products WHERE id = ?";
-    $productStmt = $db->prepare($productQuery);
-    $productStmt->execute([$productId]);
-    $product = $productStmt->fetch();
+    // Start transaction for stock reservation
+    $db->beginTransaction();
     
-    if (!$product) {
-        Response::error('Producto no encontrado', 404);
-    }
-    
-    if (!$product['active']) {
-        Response::error('Este producto no está disponible');
-    }
-    
-    // Prevent sellers from adding their own products
-    if ($product['seller_id'] == $userId) {
-        Response::error('No puedes agregar tus propios productos al carrito');
-    }
-    
-    // Check stock availability
-    if ($product['stock'] < $quantity) {
-        Response::error('Stock insuficiente. Disponible: ' . $product['stock']);
-    }
-    
-    // Get or create active cart for user
-    $cartQuery = "SELECT id FROM carts WHERE user_id = ? AND status = 'active' LIMIT 1";
-    $cartStmt = $db->prepare($cartQuery);
-    $cartStmt->execute([$userId]);
-    $cart = $cartStmt->fetch();
-    
-    if (!$cart) {
-        // Create new cart
-        $createCartQuery = "INSERT INTO carts (user_id, status) VALUES (?, 'active')";
-        $createCartStmt = $db->prepare($createCartQuery);
-        $createCartStmt->execute([$userId]);
-        $cartId = $db->lastInsertId();
-    } else {
-        $cartId = $cart['id'];
-    }
-    
-    // Check if product already in cart
-    $checkQuery = "SELECT id, quantity FROM cart_items WHERE cart_id = ? AND product_id = ?";
-    $checkStmt = $db->prepare($checkQuery);
-    $checkStmt->execute([$cartId, $productId]);
-    $existingItem = $checkStmt->fetch();
-    
-    if ($existingItem) {
-        // Update quantity
-        $newQuantity = $existingItem['quantity'] + $quantity;
+    try {
+        // Verify product exists and is active (with lock)
+        $productQuery = "SELECT id, name, price, stock, reserved_stock, active, seller_id FROM products WHERE id = ? FOR UPDATE";
+        $productStmt = $db->prepare($productQuery);
+        $productStmt->execute([$productId]);
+        $product = $productStmt->fetch();
         
-        // Check stock for new quantity
-        if ($product['stock'] < $newQuantity) {
-            Response::error('Stock insuficiente. Disponible: ' . $product['stock'] . ', en carrito: ' . $existingItem['quantity']);
+        if (!$product) {
+            throw new Exception('Producto no encontrado');
         }
         
-        $updateQuery = "UPDATE cart_items SET quantity = ?, modification_date = CURRENT_TIMESTAMP WHERE id = ?";
-        $updateStmt = $db->prepare($updateQuery);
-        $updateStmt->execute([$newQuantity, $existingItem['id']]);
+        if (!$product['active']) {
+            throw new Exception('Este producto no está disponible');
+        }
         
-        $message = 'Cantidad actualizada en el carrito';
-    } else {
-        // Add new item
-        $insertQuery = "INSERT INTO cart_items (cart_id, product_id, quantity, price) VALUES (?, ?, ?, ?)";
-        $insertStmt = $db->prepare($insertQuery);
-        $insertStmt->execute([$cartId, $productId, $quantity, $product['price']]);
+        // Prevent sellers from adding their own products
+        if ($product['seller_id'] == $userId) {
+            throw new Exception('No puedes agregar tus propios productos al carrito');
+        }
         
-        $message = 'Producto agregado al carrito';
+        // Calculate available stock (stock - reserved_stock)
+        $availableStock = $product['stock'] - $product['reserved_stock'];
+        
+        // Check stock availability
+        if ($availableStock < $quantity) {
+            throw new Exception('Stock insuficiente. Disponible: ' . $availableStock);
+        }
+    
+        // Get or create active cart for user
+        $cartQuery = "SELECT id, expires_at FROM carts WHERE user_id = ? AND status = 'active' LIMIT 1";
+        $cartStmt = $db->prepare($cartQuery);
+        $cartStmt->execute([$userId]);
+        $cart = $cartStmt->fetch();
+        
+        if (!$cart) {
+            // Create new cart with expiration date (10 days from now)
+            $expiresAt = date('Y-m-d H:i:s', strtotime('+10 days'));
+            $createCartQuery = "INSERT INTO carts (user_id, status, expires_at) VALUES (?, 'active', ?)";
+            $createCartStmt = $db->prepare($createCartQuery);
+            $createCartStmt->execute([$userId, $expiresAt]);
+            $cartId = $db->lastInsertId();
+        } else {
+            $cartId = $cart['id'];
+            // Update cart expiration and modification date
+            $updateCartQuery = "UPDATE carts SET modification_date = CURRENT_TIMESTAMP WHERE id = ?";
+            $updateCartStmt = $db->prepare($updateCartQuery);
+            $updateCartStmt->execute([$cartId]);
+        }
+        
+        // Check if product already in cart
+        $checkQuery = "SELECT id, quantity FROM cart_items WHERE cart_id = ? AND product_id = ?";
+        $checkStmt = $db->prepare($checkQuery);
+        $checkStmt->execute([$cartId, $productId]);
+        $existingItem = $checkStmt->fetch();
+        
+        if ($existingItem) {
+            // Update quantity
+            $newQuantity = $existingItem['quantity'] + $quantity;
+            
+            // Check stock for new quantity
+            if ($availableStock < $newQuantity - $existingItem['quantity']) {
+                throw new Exception('Stock insuficiente. Disponible: ' . $availableStock . ', en carrito: ' . $existingItem['quantity']);
+            }
+            
+            // Reserve additional stock
+            $additionalQty = $quantity;
+            $updateStockQuery = "UPDATE products SET reserved_stock = reserved_stock + ? WHERE id = ?";
+            $updateStockStmt = $db->prepare($updateStockQuery);
+            $updateStockStmt->execute([$additionalQty, $productId]);
+            
+            $updateQuery = "UPDATE cart_items SET quantity = ?, modification_date = CURRENT_TIMESTAMP WHERE id = ?";
+            $updateStmt = $db->prepare($updateQuery);
+            $updateStmt->execute([$newQuantity, $existingItem['id']]);
+            
+            $message = 'Cantidad actualizada en el carrito';
+        } else {
+            // Reserve stock for new item
+            $updateStockQuery = "UPDATE products SET reserved_stock = reserved_stock + ? WHERE id = ?";
+            $updateStockStmt = $db->prepare($updateStockQuery);
+            $updateStockStmt->execute([$quantity, $productId]);
+            
+            // Add new item
+            $insertQuery = "INSERT INTO cart_items (cart_id, product_id, quantity, price) VALUES (?, ?, ?, ?)";
+            $insertStmt = $db->prepare($insertQuery);
+            $insertStmt->execute([$cartId, $productId, $quantity, $product['price']]);
+            
+            $message = 'Producto agregado al carrito';
+        }
+        
+        // Commit transaction
+        $db->commit();
+    
+        // Get cart summary
+        $summaryQuery = "
+            SELECT 
+                COUNT(*) as total_items,
+                SUM(quantity) as total_quantity,
+                SUM(quantity * price) as total_price
+            FROM cart_items 
+            WHERE cart_id = ?
+        ";
+        $summaryStmt = $db->prepare($summaryQuery);
+        $summaryStmt->execute([$cartId]);
+        $summary = $summaryStmt->fetch();
+        
+        Response::success([
+            'message' => $message,
+            'cart_id' => $cartId,
+            'product_name' => $product['name'],
+            'quantity' => $quantity,
+            'cart_summary' => [
+                'total_items' => (int)$summary['total_items'],
+                'total_quantity' => (int)$summary['total_quantity'],
+                'total_price' => (float)$summary['total_price']
+            ]
+        ]);
+        
+    } catch (Exception $e) {
+        $db->rollBack();
+        error_log("Error in add to cart: " . $e->getMessage());
+        Response::error($e->getMessage());
     }
-    
-    // Get cart summary
-    $summaryQuery = "
-        SELECT 
-            COUNT(*) as total_items,
-            SUM(quantity) as total_quantity,
-            SUM(quantity * price) as total_price
-        FROM cart_items 
-        WHERE cart_id = ?
-    ";
-    $summaryStmt = $db->prepare($summaryQuery);
-    $summaryStmt->execute([$cartId]);
-    $summary = $summaryStmt->fetch();
-    
-    Response::success([
-        'message' => $message,
-        'cart_id' => $cartId,
-        'product_name' => $product['name'],
-        'quantity' => $quantity,
-        'cart_summary' => [
-            'total_items' => (int)$summary['total_items'],
-            'total_quantity' => (int)$summary['total_quantity'],
-            'total_price' => (float)$summary['total_price']
-        ]
-    ]);
     
 } catch (Exception $e) {
     error_log("Error in add to cart: " . $e->getMessage());
