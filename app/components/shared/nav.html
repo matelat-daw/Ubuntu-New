@@ -1,0 +1,37 @@
+<!-- Navigation -->
+<nav class="app-nav d-none" id="mainNav">
+    <div class="container-fluid">
+        <ul class="nav-menu">
+            <li class="nav-item">
+                <a href="#" onclick="goToDashboard(event)" class="nav-link">
+                    <i class="bi bi-house-door"></i>
+                    <span>Inicio</span>
+                </a>
+            </li>
+            <li class="nav-item seller-only d-none">
+                <a href="#" onclick="showProductsTab(event)" class="nav-link">
+                    <i class="bi bi-box-seam"></i>
+                    <span>Productos</span>
+                </a>
+            </li>
+            <li class="nav-item seller-only d-none">
+                <a href="#" onclick="showAddProductTab(event)" class="nav-link">
+                    <i class="bi bi-plus-circle"></i>
+                    <span>Agregar</span>
+                </a>
+            </li>
+            <li class="nav-item authenticated-only d-none">
+                <a href="#" onclick="showProfileTab(event)" class="nav-link">
+                    <i class="bi bi-person-circle"></i>
+                    <span>Perfil</span>
+                </a>
+            </li>
+            <li class="nav-item authenticated-only d-none">
+                <a href="#" onclick="logout(event)" class="nav-link">
+                    <i class="bi bi-box-arrow-right"></i>
+                    <span>Salir</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+</nav>

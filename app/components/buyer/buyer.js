@@ -15,7 +15,7 @@ async function loadBuyerProfile() {
             
             // Update info section
             const isPremium = user.role === 'buyer_premium';
-            const badgeClass = isPremium ? 'badge bg-warning' : 'badge bg-info';
+            const badgeClass = isPremium ? 'badge bg-warning text-dark' : 'badge bg-primary';
             const upgradeBtn = isPremium ? '' : `<button onclick="upgradeToPremium()" class="btn btn-success btn-sm mt-2"><i class="bi bi-star-fill"></i> Actualizar a Premium</button>`;
             
             document.getElementById('buyerInfo').innerHTML = `
@@ -26,7 +26,7 @@ async function loadBuyerProfile() {
                         <p class="mb-2"><i class="bi bi-telephone"></i> <strong>Teléfono:</strong> ${user.phone || 'No especificado'}</p>
                     </div>
                     <div class="col-md-6">
-                        <p class="mb-2"><i class="bi bi-shield-check"></i> <strong>Estado:</strong> <span class="badge ${user.email_verified ? 'bg-success' : 'bg-warning'}">${user.email_verified ? 'Verificado' : 'Pendiente verificación'}</span></p>
+                        <p class="mb-2"><i class="bi bi-shield-check"></i> <strong>Estado:</strong> <span class="badge ${user.email_verified ? 'bg-success' : 'bg-warning text-dark'}">${user.email_verified ? 'Verificado' : 'Pendiente verificación'}</span></p>
                         <p class="mb-2"><i class="bi bi-star"></i> <strong>Plan:</strong> <span class="${badgeClass}">${user.role}</span></p>
                     </div>
                 </div>

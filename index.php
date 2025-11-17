@@ -13,6 +13,12 @@
 </head>
 <body>
     
+    <!-- Header Component -->
+    <?php include __DIR__ . '/app/components/shared/header.html'; ?>
+    
+    <!-- Navigation Component -->
+    <?php include __DIR__ . '/app/components/shared/nav.html'; ?>
+    
     <!-- Login Component -->
     <?php include __DIR__ . '/app/components/login/login.html'; ?>
     
@@ -28,6 +34,9 @@
     <!-- Admin Dashboard Component -->
     <?php include __DIR__ . '/app/components/admin/admin.html'; ?>
     
+    <!-- Footer Component -->
+    <?php include __DIR__ . '/app/components/shared/footer.html'; ?>
+    
     <!-- Shared Modal Component -->
     <?php include __DIR__ . '/app/components/shared/modal.html'; ?>
     
@@ -39,6 +48,9 @@
     
     <!-- Shared Modal Functions -->
     <script src="/app/components/shared/modal.js"></script>
+    
+    <!-- Header and Nav Functions -->
+    <script src="/app/components/shared/header.js"></script>
     
     <!-- Main Application -->
     <script src="/app/assets/js/app.js"></script>

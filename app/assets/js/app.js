@@ -16,6 +16,7 @@ async function checkSession() {
             const result = await response.json();
             if (result.success) {
                 currentUser = result.data.user;
+                updateHeaderInfo();
                 showDashboard();
                 return;
             }
@@ -23,17 +24,20 @@ async function checkSession() {
     } catch (error) {
         console.log('No active session');
     }
+    updateHeaderInfo();
     showLogin();
 }
 
 // Logout
-async function logout() {
+async function logout(event) {
+    if (event) event.preventDefault();
     try {
         await fetch('/api/controllers/auth/logout.php', { method: 'POST', credentials: 'include' });
     } catch (error) {
         console.error('Logout error:', error);
     }
     currentUser = null;
+    updateHeaderInfo();
     showLogin();
 }
 
@@ -41,6 +45,7 @@ async function logout() {
 function showDashboard() {
     document.getElementById('loginContainer').classList.add('d-none');
     document.getElementById('registerContainer').classList.add('d-none');
+    updateHeaderInfo();
     const role = currentUser.role;
     if (role === 'admin' || role === 'manager') {
         showAdminDashboard();

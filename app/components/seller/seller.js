@@ -15,7 +15,7 @@ async function loadSellerProfile() {
             
             // Update info section
             const isPremium = user.role === 'seller_premium';
-            const badgeClass = isPremium ? 'badge bg-warning' : 'badge bg-info';
+            const badgeClass = isPremium ? 'badge bg-warning text-dark' : 'badge bg-primary';
             const upgradeBtn = isPremium ? '' : `<button onclick="upgradeToPremium()" class="btn btn-success btn-sm mt-2"><i class="bi bi-star-fill"></i> Actualizar a Premium</button>`;
             
             document.getElementById('sellerInfo').innerHTML = `
@@ -26,7 +26,7 @@ async function loadSellerProfile() {
                         <p class="mb-1"><i class="bi bi-telephone"></i> ${user.phone || 'No especificado'}</p>
                     </div>
                     <div class="col-md-6">
-                        <p class="mb-1"><i class="bi bi-shield-check"></i> <span class="badge ${user.email_verified ? 'bg-success' : 'bg-warning'}">${user.email_verified ? 'Verificado' : 'Pendiente'}</span></p>
+                        <p class="mb-1"><i class="bi bi-shield-check"></i> <span class="badge ${user.email_verified ? 'bg-success' : 'bg-warning text-dark'}">${user.email_verified ? 'Verificado' : 'Pendiente'}</span></p>
                         <p class="mb-1"><i class="bi bi-star"></i> <span class="${badgeClass}">${user.role}</span></p>
                     </div>
                 </div>
@@ -66,7 +66,7 @@ async function loadSellerProducts() {
                             <p class="h4 text-success mb-2">€${parseFloat(product.price).toFixed(2)}</p>
                             <p class="text-muted mb-2">
                                 <i class="bi bi-box"></i> Stock: ${product.stock} 
-                                ${product.stock < 5 ? '<span class="badge bg-warning">Bajo stock</span>' : ''}
+                                ${product.stock < 5 ? '<span class="badge bg-warning text-dark">Bajo stock</span>' : ''}
                             </p>
                             <p class="card-text text-muted small">${product.short_description || ''}</p>
                             ${product.featured ? '<span class="badge bg-primary"><i class="bi bi-star-fill"></i> Destacado</span>' : ''}
