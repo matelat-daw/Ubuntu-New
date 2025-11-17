@@ -1,0 +1,83 @@
+<!-- Register Form -->
+<div id="registerContainer" class="container d-none">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-lg glass-effect">
+                <div class="card-body p-5">
+                    <h1 class="card-title text-center mb-2">Crear Cuenta</h1>
+                    <p class="text-muted text-center mb-4">Registro de nuevo usuario</p>
+                    <form id="registerForm">
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <label for="name" class="form-label">Nombre *</label>
+                                <input type="text" class="form-control" id="name" name="name" required placeholder="Ej: Juan">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="surname1" class="form-label">Primer apellido *</label>
+                                <input type="text" class="form-control" id="surname1" name="surname1" required placeholder="Ej: García">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="surname2" class="form-label">Segundo apellido</label>
+                                <input type="text" class="form-control" id="surname2" name="surname2" placeholder="Ej: López">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Correo electrónico *</label>
+                            <input type="email" class="form-control" id="email" name="email" required placeholder="tu@email.com">
+                        </div>
+                        <div class="mb-3">
+                            <label for="phone" class="form-label">Teléfono *</label>
+                            <input type="tel" class="form-control" id="phone" name="phone" required placeholder="Ej: +34 600 123 456">
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="password" class="form-label">Contraseña *</label>
+                                <input type="password" class="form-control" id="password" name="password" required placeholder="Mínimo 8 caracteres">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="confirm_password" class="form-label">Confirmar contraseña *</label>
+                                <input type="password" class="form-control" id="confirm_password" name="confirm_password" required placeholder="Repite tu contraseña">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="profile_image" class="form-label">Imagen de perfil (opcional)</label>
+                            <input type="file" class="form-control" id="profile_image" name="profile_image" accept="image/*">
+                            <small class="text-muted">Formatos aceptados: JPG, PNG, GIF (máx. 5MB)</small>
+                            <div id="profileImagePreview" class="mt-2"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Tipo de cuenta *</label>
+                            <div class="d-flex gap-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="role" value="seller_basic" id="roleSeller" required>
+                                    <label class="form-check-label" for="roleSeller">
+                                        🏪 Vendedor
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="role" value="buyer_basic" id="roleBuyer" required>
+                                    <label class="form-check-label" for="roleBuyer">
+                                        🛒 Comprador
+                                    </label>
+                                </div>
+                            </div>
+                            <small class="text-muted">Podrás actualizar a Premium más adelante</small>
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="terms" name="terms" required>
+                            <label class="form-check-label" for="terms">
+                                Acepto los términos y condiciones y he leído la 
+                                <a href="#" onclick="showPrivacyPolicy(event)" class="text-primary">Política de Privacidad</a>
+                            </label>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100 py-2">Crear cuenta</button>
+                    </form>
+                    <div class="text-center mt-3">
+                        <a href="#" class="text-decoration-none" id="showLoginLink">¿Ya tienes cuenta? Inicia sesión</a>
+                    </div>
+                    <div id="registerMessage" class="alert mt-3" style="display: none;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

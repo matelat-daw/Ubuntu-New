@@ -1,0 +1,188 @@
+<!-- Dashboard (Seller) -->
+<div id="sellerDashboard" class="container d-none">
+    <div class="card shadow-lg glass-effect mb-4">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center flex-wrap">
+                <div>
+                    <h1 class="h3 mb-1"><i class="bi bi-shop"></i> Panel de Vendedor</h1>
+                    <p class="text-muted mb-0">Gestiona tus productos y perfil</p>
+                </div>
+                <button onclick="logout()" class="btn btn-danger"><i class="bi bi-box-arrow-right"></i> Cerrar Sesión</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Seller Profile Card -->
+    <div class="card shadow glass-effect mb-4">
+        <div class="card-body">
+            <div class="row align-items-center">
+                <div class="col-md-2 text-center">
+                    <img id="sellerProfileImage" src="/api/assets/media/profile.jpg" alt="Foto de perfil" class="rounded-circle border border-3 border-success" style="width: 120px; height: 120px; object-fit: cover;">
+                </div>
+                <div class="col-md-8">
+                    <div id="sellerInfo"></div>
+                </div>
+                <div class="col-md-2 text-end">
+                    <button onclick="showSellerProfileManagement()" class="btn btn-outline-primary btn-sm">
+                        <i class="bi bi-gear"></i> Gestionar Perfil
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Tabs Navigation -->
+    <ul class="nav nav-tabs mb-3" id="sellerTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="products-tab" data-bs-toggle="tab" data-bs-target="#productsTab" type="button" role="tab">
+                <i class="bi bi-box-seam"></i> Mis Productos
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="add-product-tab" data-bs-toggle="tab" data-bs-target="#addProductTab" type="button" role="tab">
+                <i class="bi bi-plus-circle"></i> Agregar Producto
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="profile-management-tab" data-bs-toggle="tab" data-bs-target="#profileManagementTab" type="button" role="tab">
+                <i class="bi bi-person-gear"></i> Mi Perfil
+            </button>
+        </li>
+    </ul>
+    
+    <!-- Tabs Content -->
+    <div class="tab-content" id="sellerTabsContent">
+        <!-- My Products Tab -->
+        <div class="tab-pane fade show active" id="productsTab" role="tabpanel">
+            <div class="card shadow glass-effect mb-4">
+                <div class="card-body">
+                    <h2 class="h4 mb-3"><i class="bi bi-bag-check"></i> Productos en Venta</h2>
+                    <div id="sellerProductsContainer" class="row g-3">
+                        <div class="col-12 text-center py-4">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Cargando...</span>
+                            </div>
+                            <p class="text-muted mt-2">Cargando productos...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Add Product Tab -->
+        <div class="tab-pane fade" id="addProductTab" role="tabpanel">
+            <div class="card shadow glass-effect">
+                <div class="card-body p-4">
+                    <h2 class="h4 mb-4"><i class="bi bi-plus-circle"></i> Subir Nuevo Producto</h2>
+                    <form id="productForm">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="productName" class="form-label">Nombre del producto *</label>
+                                <input type="text" class="form-control" id="productName" name="name" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="productShortDesc" class="form-label">Descripción corta</label>
+                                <input type="text" class="form-control" id="productShortDesc" name="short_description">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="productDesc" class="form-label">Descripción completa *</label>
+                            <textarea class="form-control" id="productDesc" name="description" rows="4" required></textarea>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="productPrice" class="form-label">Precio (€) *</label>
+                                <input type="number" class="form-control" id="productPrice" name="price" step="0.01" min="0.01" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="productStock" class="form-label">Stock *</label>
+                                <input type="number" class="form-control" id="productStock" name="stock" min="0" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Imágenes del producto * (mínimo 1, máximo 10)</label>
+                            <input type="file" class="form-control" id="productImages" name="images[]" accept="image/*" multiple required>
+                            <div id="imagePreview" class="row g-2 mt-2"></div>
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="productFeatured" name="featured">
+                            <label class="form-check-label" for="productFeatured">Producto destacado</label>
+                        </div>
+                        <button type="submit" class="btn btn-primary"><i class="bi bi-cloud-upload"></i> Publicar Producto</button>
+                    </form>
+                    <div id="productMessage" class="alert mt-3" style="display: none;"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Profile Management Tab -->
+        <div class="tab-pane fade" id="profileManagementTab" role="tabpanel">
+            <!-- Update Profile Form -->
+            <div class="card shadow glass-effect mb-4">
+                <div class="card-body p-4">
+                    <h2 class="h4 mb-4"><i class="bi bi-pencil-square"></i> Actualizar Información</h2>
+                    <form id="updateSellerProfileForm">
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label for="updateSellerName" class="form-label">Nombre *</label>
+                                <input type="text" class="form-control" id="updateSellerName" name="name" required>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="updateSellerSurname1" class="form-label">Primer apellido *</label>
+                                <input type="text" class="form-control" id="updateSellerSurname1" name="surname1" required>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="updateSellerSurname2" class="form-label">Segundo apellido</label>
+                                <input type="text" class="form-control" id="updateSellerSurname2" name="surname2">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="updateSellerEmail" class="form-label">Correo electrónico *</label>
+                                <input type="email" class="form-control" id="updateSellerEmail" name="email" required>
+                                <small class="text-muted">Si cambias el email, deberás verificarlo nuevamente</small>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="updateSellerPhone" class="form-label">Teléfono</label>
+                                <input type="tel" class="form-control" id="updateSellerPhone" name="phone">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="updateSellerProfileImage" class="form-label">Cambiar imagen de perfil</label>
+                            <input type="file" class="form-control" id="updateSellerProfileImage" name="profile_image" accept="image/*">
+                            <small class="text-muted">Formatos aceptados: JPG, PNG, GIF (máx. 5MB)</small>
+                            <div id="updateSellerProfileImagePreview" class="mt-2"></div>
+                        </div>
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle"></i> <strong>Cambiar contraseña:</strong> Deja los campos en blanco si no deseas cambiar tu contraseña
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="updateSellerPassword" class="form-label">Nueva contraseña</label>
+                                <input type="password" class="form-control" id="updateSellerPassword" name="password" placeholder="Mínimo 8 caracteres">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="updateSellerConfirmPassword" class="form-label">Confirmar nueva contraseña</label>
+                                <input type="password" class="form-control" id="updateSellerConfirmPassword" name="confirm_password" placeholder="Repite la contraseña">
+                            </div>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary"><i class="bi bi-check-circle"></i> Guardar Cambios</button>
+                            <button type="button" onclick="loadSellerProfile()" class="btn btn-secondary"><i class="bi bi-arrow-clockwise"></i> Recargar Datos</button>
+                        </div>
+                    </form>
+                    <div id="updateSellerProfileMessage" class="alert mt-3" style="display: none;"></div>
+                </div>
+            </div>
+            
+            <!-- Delete Account Section -->
+            <div class="card shadow glass-effect border-danger mb-4">
+                <div class="card-body p-4">
+                    <h2 class="h4 mb-3 text-danger"><i class="bi bi-exclamation-triangle"></i> Zona Peligrosa</h2>
+                    <p class="text-muted mb-3">Una vez que elimines tu cuenta, no hay vuelta atrás. Todos tus productos serán eliminados. Por favor, está seguro.</p>
+                    <button onclick="deleteSellerAccount()" class="btn btn-danger"><i class="bi bi-trash"></i> Eliminar mi cuenta permanentemente</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

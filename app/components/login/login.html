@@ -1,0 +1,28 @@
+<!-- Login Form -->
+<div id="loginContainer" class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="card shadow-lg glass-effect">
+                <div class="card-body p-5">
+                    <h1 class="card-title text-center mb-2">Iniciar Sesión</h1>
+                    <p class="text-muted text-center mb-4">E-commerce Platform</p>
+                    <form id="loginForm">
+                        <div class="mb-3">
+                            <label for="loginEmail" class="form-label">Correo electrónico</label>
+                            <input type="email" class="form-control" id="loginEmail" name="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="loginPassword" class="form-label">Contraseña</label>
+                            <input type="password" class="form-control" id="loginPassword" name="password" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100 py-2">Iniciar Sesión</button>
+                    </form>
+                    <div class="text-center mt-3">
+                        <a href="#" class="text-decoration-none" id="showRegisterLink">¿No tienes cuenta? Créala aquí</a>
+                    </div>
+                    <div id="loginMessage" class="alert mt-3" style="display: none;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

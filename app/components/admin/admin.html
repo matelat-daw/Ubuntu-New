@@ -1,0 +1,63 @@
+<!-- Dashboard (Admin) -->
+<div id="adminDashboard" class="container d-none">
+    <div class="card shadow-lg glass-effect mb-4">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center flex-wrap">
+                <div>
+                    <h1 class="h3 mb-1">Panel de Administración</h1>
+                    <p class="text-muted mb-0">Gestión completa del sistema</p>
+                </div>
+                <button onclick="logout()" class="btn btn-danger"><i class="bi bi-box-arrow-right"></i> Cerrar Sesión</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card shadow glass-effect mb-4">
+        <div class="card-body" id="adminInfo"></div>
+    </div>
+    
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="card h-100 border-primary">
+                <div class="card-body">
+                    <h3 class="h5 text-primary mb-3"><i class="bi bi-file-earmark-bar-graph"></i> Reportes de Facturación</h3>
+                    <div class="mb-2">
+                        <label class="form-label">Fecha inicio</label>
+                        <input type="date" class="form-control" id="billingStartDate">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Fecha fin</label>
+                        <input type="date" class="form-control" id="billingEndDate">
+                    </div>
+                    <button onclick="downloadBillingReport()" class="btn btn-success w-100">
+                        <i class="bi bi-file-earmark-excel"></i> Descargar Excel
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 border-success">
+                <div class="card-body">
+                    <h3 class="h5 text-success mb-3"><i class="bi bi-graph-up"></i> Reporte de Ventas</h3>
+                    <p class="text-muted">Productos vendidos y comisiones</p>
+                    <button onclick="downloadSalesReport()" class="btn btn-success w-100 mt-auto">
+                        <i class="bi bi-file-earmark-excel"></i> Descargar Excel
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 border-warning">
+                <div class="card-body">
+                    <h3 class="h5 text-warning mb-3"><i class="bi bi-box-seam"></i> Ver Productos</h3>
+                    <p class="text-muted">Todos los productos del sistema</p>
+                    <button onclick="viewAllProducts()" class="btn btn-warning w-100 mt-auto">
+                        <i class="bi bi-eye"></i> Ver Catálogo
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="adminProductsContainer" class="row g-3 d-none"></div>
+</div>

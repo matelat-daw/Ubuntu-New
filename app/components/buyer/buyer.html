@@ -1,0 +1,95 @@
+<!-- Dashboard (Buyer) -->
+<div id="buyerDashboard" class="container d-none">
+    <div class="card shadow-lg glass-effect mb-4">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center flex-wrap">
+                <div>
+                    <h1 class="h3 mb-1"><i class="bi bi-person-circle"></i> Mi Perfil</h1>
+                    <p class="text-muted mb-0">Gestiona tu información personal</p>
+                </div>
+                <button onclick="logout()" class="btn btn-danger"><i class="bi bi-box-arrow-right"></i> Cerrar Sesión</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- User Info Card -->
+    <div class="card shadow glass-effect mb-4">
+        <div class="card-body">
+            <div class="row align-items-center">
+                <div class="col-md-3 text-center">
+                    <img id="buyerProfileImage" src="/api/assets/media/profile.jpg" alt="Foto de perfil" class="rounded-circle border border-3 border-primary" style="width: 150px; height: 150px; object-fit: cover;">
+                </div>
+                <div class="col-md-9">
+                    <div id="buyerInfo"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Update Profile Form -->
+    <div class="card shadow glass-effect mb-4">
+        <div class="card-body p-4">
+            <h2 class="h4 mb-4"><i class="bi bi-pencil-square"></i> Actualizar Información</h2>
+            <form id="updateProfileForm">
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label for="updateName" class="form-label">Nombre *</label>
+                        <input type="text" class="form-control" id="updateName" name="name" required>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="updateSurname1" class="form-label">Primer apellido *</label>
+                        <input type="text" class="form-control" id="updateSurname1" name="surname1" required>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="updateSurname2" class="form-label">Segundo apellido</label>
+                        <input type="text" class="form-control" id="updateSurname2" name="surname2">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="updateEmail" class="form-label">Correo electrónico *</label>
+                        <input type="email" class="form-control" id="updateEmail" name="email" required>
+                        <small class="text-muted">Si cambias el email, deberás verificarlo nuevamente</small>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="updatePhone" class="form-label">Teléfono</label>
+                        <input type="tel" class="form-control" id="updatePhone" name="phone">
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="updateProfileImage" class="form-label">Cambiar imagen de perfil</label>
+                    <input type="file" class="form-control" id="updateProfileImage" name="profile_image" accept="image/*">
+                    <small class="text-muted">Formatos aceptados: JPG, PNG, GIF (máx. 5MB)</small>
+                    <div id="updateProfileImagePreview" class="mt-2"></div>
+                </div>
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i> <strong>Cambiar contraseña:</strong> Deja los campos en blanco si no deseas cambiar tu contraseña
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="updatePassword" class="form-label">Nueva contraseña</label>
+                        <input type="password" class="form-control" id="updatePassword" name="password" placeholder="Mínimo 8 caracteres">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="updateConfirmPassword" class="form-label">Confirmar nueva contraseña</label>
+                        <input type="password" class="form-control" id="updateConfirmPassword" name="confirm_password" placeholder="Repite la contraseña">
+                    </div>
+                </div>
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-check-circle"></i> Guardar Cambios</button>
+                    <button type="button" onclick="loadBuyerProfile()" class="btn btn-secondary"><i class="bi bi-arrow-clockwise"></i> Recargar Datos</button>
+                </div>
+            </form>
+            <div id="updateProfileMessage" class="alert mt-3" style="display: none;"></div>
+        </div>
+    </div>
+    
+    <!-- Delete Account Section -->
+    <div class="card shadow glass-effect border-danger mb-4">
+        <div class="card-body p-4">
+            <h2 class="h4 mb-3 text-danger"><i class="bi bi-exclamation-triangle"></i> Zona Peligrosa</h2>
+            <p class="text-muted mb-3">Una vez que elimines tu cuenta, no hay vuelta atrás. Por favor, está seguro.</p>
+            <button onclick="deleteAccount()" class="btn btn-danger"><i class="bi bi-trash"></i> Eliminar mi cuenta permanentemente</button>
+        </div>
+    </div>
+</div>
