@@ -1,15 +1,58 @@
 <!-- Header -->
 <header class="app-header">
     <div class="container-fluid">
-        <div class="row align-items-center py-3">
-            <div class="col-6 col-md-3">
-                <div class="logo">
-                    <i class="bi bi-shop-window"></i>
-                    <span class="ms-2 d-none d-md-inline">E-commerce</span>
+        <div class="row align-items-center py-2 py-md-3">
+            <!-- Logo y Título -->
+            <div class="col-6 col-md-4 col-lg-3">
+                <div class="d-flex align-items-center" onclick="showHome()" style="cursor: pointer;">
+                    <img src="/app/assets/imgs/logo.png" alt="Logo" class="header-logo">
+                    <h1 class="header-title mb-0 ms-2">E-commerce Platform</h1>
                 </div>
             </div>
-            <div class="col-6 col-md-9 text-end">
-                <div id="headerUserInfo"></div>
+            
+            <!-- Controles de Accesibilidad y Autenticación -->
+            <div class="col-6 col-md-8 col-lg-9">
+                <div class="d-flex align-items-center justify-content-end gap-2">
+                    <!-- Tamaño de Fuente -->
+            <!-- Font Size Controls -->
+            <div class="btn-group me-2 d-none d-md-flex" role="group">
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="changeFontSize('decrease')" title="Reducir tamaño">
+                    <span>Aa A-</span>
+                </button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="changeFontSize('increase')" title="Aumentar tamaño">
+                    <span>Aa A+</span>
+                </button>
+            </div>                    <!-- Tema Claro/Oscuro -->
+                    <button class="btn btn-outline-secondary btn-sm d-none d-md-block" onclick="toggleTheme()" id="themeToggle" title="Cambiar tema">
+                        <i class="bi bi-moon-fill"></i>
+                    </button>
+                    
+                    <!-- Botones de Autenticación (si no está logueado) -->
+                    <div id="authButtons" class="d-flex gap-2">
+                        <button class="btn btn-outline-primary btn-sm" onclick="showLoginForm()">
+                            <i class="bi bi-box-arrow-in-right"></i>
+                            <span class="d-none d-lg-inline ms-1">Iniciar Sesión</span>
+                        </button>
+                        <button class="btn btn-primary btn-sm" onclick="showRegisterForm()">
+                            <i class="bi bi-person-plus"></i>
+                            <span class="d-none d-lg-inline ms-1">Registro</span>
+                        </button>
+                    </div>
+                    
+                    <!-- Usuario Logueado (dropdown) -->
+                    <div id="userDropdown" class="dropdown d-none">
+                        <button class="btn btn-light btn-sm dropdown-toggle d-flex align-items-center" type="button" id="userMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                            <img id="userAvatar" src="/api/assets/media/profile.jpg" alt="Avatar" class="rounded-circle me-2" style="width: 30px; height: 30px; object-fit: cover;">
+                            <span id="userName" class="d-none d-md-inline">Usuario</span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenuButton">
+                            <li><a class="dropdown-item" href="#" onclick="goToDashboard(event)"><i class="bi bi-house"></i> Mi Dashboard</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="goToProfile(event)"><i class="bi bi-person"></i> Mi Perfil</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-danger" href="#" onclick="logout(event)"><i class="bi bi-box-arrow-right"></i> Cerrar Sesión</a></li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

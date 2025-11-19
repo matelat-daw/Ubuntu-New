@@ -25,7 +25,7 @@ async function checkSession() {
         console.log('No active session');
     }
     updateHeaderInfo();
-    showLogin();
+    showHome(); // Show home instead of login
 }
 
 // Logout
@@ -38,11 +38,12 @@ async function logout(event) {
     }
     currentUser = null;
     updateHeaderInfo();
-    showLogin();
+    showHome(); // Go to home after logout
 }
 
 // Dashboard Router
 function showDashboard() {
+    document.getElementById('homeContainer')?.classList.add('d-none');
     document.getElementById('loginContainer').classList.add('d-none');
     document.getElementById('registerContainer').classList.add('d-none');
     updateHeaderInfo();

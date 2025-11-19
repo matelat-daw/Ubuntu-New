@@ -22,6 +22,7 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
         
         if (result.success) {
             currentUser = result.data.user;
+            updateHeaderInfo(); // Update header with user info
             showDashboard();
         } else {
             showMessage('loginMessage', result.message, 'danger');
@@ -32,6 +33,7 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
 });
 
 function showLogin() {
+    document.getElementById('homeContainer')?.classList.add('d-none');
     document.getElementById('loginContainer').classList.remove('d-none');
     document.getElementById('registerContainer').classList.add('d-none');
     hideAllDashboards();

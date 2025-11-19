@@ -1,6 +1,7 @@
 // Register Component
 
 function showRegister() {
+    document.getElementById('homeContainer')?.classList.add('d-none');
     document.getElementById('loginContainer').classList.add('d-none');
     document.getElementById('registerContainer').classList.remove('d-none');
     document.getElementById('sellerDashboard').classList.add('d-none');

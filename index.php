@@ -19,6 +19,9 @@
     <!-- Navigation Component -->
     <?php include __DIR__ . '/app/components/shared/nav.html'; ?>
     
+    <!-- Home Component (Main Page) -->
+    <?php include __DIR__ . '/app/components/home/home.html'; ?>
+    
     <!-- Login Component -->
     <?php include __DIR__ . '/app/components/login/login.html'; ?>
     
@@ -56,6 +59,7 @@
     <script src="/app/assets/js/app.js"></script>
     
     <!-- Component Scripts -->
+    <script src="/app/components/home/home.js"></script>
     <script src="/app/components/login/login.js"></script>
     <script src="/app/components/register/register.js"></script>
     <script src="/app/components/seller/seller.js"></script>
