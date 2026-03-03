@@ -1,0 +1,52 @@
+{
+    "name": "Energy App – Comparador de Tarifas Eléctricas",
+    "short_name": "Energy App",
+    "description": "Compara los mejores proveedores de electricidad en España y ahorra hasta un 30% en tu factura de luz con energía 100% renovable.",
+    "start_url": "/Energy/#home",
+    "scope": "/Energy/",
+    "display": "standalone",
+    "background_color": "#f8fafc",
+    "theme_color": "#047857",
+    "orientation": "portrait-primary",
+    "lang": "es",
+    "dir": "ltr",
+    "categories": ["finance", "utilities"],
+    "icons": [
+        {
+            "src": "/Energy/frontend/assets/icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/Energy/frontend/assets/icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ],
+    "screenshots": [
+        {
+            "src": "/Energy/frontend/assets/screenshot-home.png",
+            "sizes": "1280x720",
+            "type": "image/png",
+            "label": "Página de inicio de Energy App"
+        }
+    ],
+    "shortcuts": [
+        {
+            "name": "Calculadora de Ahorro",
+            "short_name": "Calculadora",
+            "description": "Calcula cuánto puedes ahorrar en tu factura de luz",
+            "url": "/Energy/#calculator",
+            "icons": [{ "src": "/Energy/frontend/assets/icon-192.png", "sizes": "192x192" }]
+        },
+        {
+            "name": "Contacto",
+            "short_name": "Contacto",
+            "description": "Contacta con nuestro equipo",
+            "url": "/Energy/#contact",
+            "icons": [{ "src": "/Energy/frontend/assets/icon-192.png", "sizes": "192x192" }]
+        }
+    ]
+}

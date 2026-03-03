@@ -1,0 +1,32 @@
+# Energy App - Robots.txt
+# https://www.energyapp.es/
+
+# Permitir a todos los bots indexar el contenido público
+User-agent: *
+Allow: /
+
+# Bloquear rutas privadas / de API
+Disallow: /Energy/api/
+Disallow: /Energy/database/
+Disallow: /Energy/frontend/services/
+Disallow: /Energy/frontend/utils/
+
+# Bloquear páginas que requieren autenticación (no tiene valor SEO)
+Disallow: /Energy/#profile
+Disallow: /Energy/#activate
+
+# Reglas específicas para Googlebot
+User-agent: Googlebot
+Allow: /
+Disallow: /Energy/api/
+
+# Reglas específicas para Bingbot
+User-agent: Bingbot
+Allow: /
+Disallow: /Energy/api/
+
+# Tiempo de espera entre peticiones (segundos)
+Crawl-delay: 1
+
+# Sitemap
+Sitemap: https://www.energyapp.es/Energy/sitemap.xml
